@@ -14,10 +14,9 @@ def get_data():
         return jsonify(data)
     elif request.method == 'POST':
         data = request.get_json()
-        # Обработка POST запроса (например, сохранение данных)
         print(f"Received {data}")
         return jsonify({'status': 'success', 'message': 'Data received!'})
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Render динамически назначает порт
+    port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
