@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: qt-python-server
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --workers 3 --bind 0.0.0.0:$PORT
+    healthCheckPath: /
+    region: oregon
+    plan: free
