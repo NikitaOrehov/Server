@@ -19,11 +19,12 @@ port = url.port
 
 try:
     conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+    print("connect to database successly")
 
 except psycopg2.Error as e:
     print(f"Error connecting to or interacting with the database: {e}")
 
-
+print("Hello from code")
 
 @app.route('/')
 def hello_world():
@@ -31,6 +32,7 @@ def hello_world():
 
 @app.route('/api/data', methods=['GET', 'POST'])
 def get_data():
+    print("get data")
     if request.method == 'GET':
         data = {'message': 'This is data from the Render server!'}
         return jsonify(data)
@@ -41,6 +43,7 @@ def get_data():
 
 @app.route('/api/data/user/login/<login>', methods=['GET'])
 def get_password(login):
+    print("get password")
     try:
         curs = conn.cursor()
         curs.execute("SELECT password FROM users WHERE login = %s", (login,))
