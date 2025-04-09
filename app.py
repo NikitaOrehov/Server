@@ -78,12 +78,13 @@ def info(login):
                 }
             _id = res[7]
             curs.execute("SELECT pred FROM PREDILECTION WHERE id = %s", (_id,))
-            res = curs.fetchone()
-            predilection = [i for i in res]
+            res = curs.fetchall()
+            predilection = [i[0] for i in res]
+            print(predilection)
             answer['pred'] = predilection
             curs.execute("SELECT event FROM achievements WHERE id = %s", (_id,))
-            res = curs.fetchone()
-            achievements = [i for i in res]
+            res = curs.fetchall()
+            achievements = [i[0] for i in res]
             answer['achiev'] = achievements
             return answer
         except psycopg2.Error as e:
