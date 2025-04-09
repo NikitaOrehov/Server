@@ -72,9 +72,9 @@ def info(login):
                 'surname': res[1].strip(),
                 'databirth': res[2],
                 'phone': res[3],
-                'location': res[4].strip(),
-                'exp_alc': res[5].strip(), 
-                'record': res[6].strip()
+                'location': res[4],
+                'exp_alc': res[5], 
+                'record': res[6]
                 }
             _id = res[7]
             curs.execute("SELECT pred FROM PREDILECTION WHERE id = %s", (_id,))
