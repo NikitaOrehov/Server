@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 
 
-DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://kinro:FBIYZJrnNRSBP9q0yeHGvr8iCKa8K9wk@dpg-cvp6c8idbo4c73bb9hk0-a.oregon-postgres.render.com/data_h57p') 
+DATABASE_URL = os.environ.get('DATABASE_URL') 
 
 url = urlparse(DATABASE_URL)
 dbname = url.path[1:]
@@ -65,7 +65,7 @@ def info(login):
     if request.method == 'GET':
         try:
             curs = conn.cursor()
-            curs.execute("SELECT name, surname, databirth, phone, location, exp_alc, record, id FROM users WHERE login = %s", (login))
+            curs.execute("SELECT name, surname, databirth, phone, location, exp_alc, record, id FROM users WHERE login = %s", (login,))
             res = curs.fetchone()
             answer = {
                 'name': res[0],
