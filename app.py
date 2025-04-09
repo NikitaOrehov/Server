@@ -81,7 +81,7 @@ def info(login):
             res = curs.fetchone()
             predilection = [i[0] for i in res]
             answer['pred'] = predilection
-            curs.execute("SELECT event FROM achievements WHERE id = %s", (_id,))\
+            curs.execute("SELECT event FROM achievements WHERE id = %s", (_id,))
             res = curs.fetchone()
             achievements = [i[0] for i in res]
             answer['achiev'] = achievements
