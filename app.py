@@ -95,6 +95,8 @@ def info(login):
         try:
             curs = conn.curse()
             curs.execute("UPDATE users SET name = %s, surname = %s, databirth = %s, login = %s, phone = %s, location = %s, exp_alc = %s, record = %s WHERE login = %s", (data.get('name'), data.get('surname'), data.get('databirth'), data.get('login'), data.get('phone'), data.get('location'), data.get('exp_alc'), data.get('record'), login))
+            res = curs.fetchall()
+            print(res)
         except psycopg2.Error as e:
             print(f"Database query error: {e}")
             return jsonify({'error': 'Database error'}), 500
