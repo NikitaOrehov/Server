@@ -92,7 +92,7 @@ def info(login):
         except psycopg2.Error as e:
             print(f"Database query error: {e}")
             return jsonify({'error': 'Database error'}), 500
-    elif request.method == 'POST':
+    if request.method == 'POST':
         data = request.get_json()
         try:
             curs = conn.cursor()
@@ -100,8 +100,11 @@ def info(login):
             if date == "":
                 date = NULL
             curs.execute("UPDATE users SET name = %s, surname = %s, databirth = %s, login = %s, phone = %s, location = %s, exp_alc = %s, record = %s WHERE login = %s", (data.get('name'), data.get('surname'), date, data.get('login'), data.get('phone'), data.get('location'), data.get('exp_alc'), data.get('record'), login))
+            curs.execute("UPDATE users SET name = 'Nik' WHERE id = 1")
             res = curs.fetchall()
-            return jsonify({'er' : res})
+            print(res)
+            print(res[0])
+            return jsonify({'er' : res[0]})
         except psycopg2.Error as e:
             print(f"Database query error: {e}")
             return jsonify({'error': 'Database error'}), 500
