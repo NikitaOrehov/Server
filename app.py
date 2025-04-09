@@ -84,6 +84,7 @@ def info(login):
             curs.execute("SELECT event FROM achievements WHERE id = %s", (_id,))
             achievements = [i for i in res]
             answer['pred'] = achievements
+            return answer
         except psycopg2.Error as e:
             print(f"Database query error: {e}")
             return jsonify({'error': 'Database error'}), 500
