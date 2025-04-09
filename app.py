@@ -99,8 +99,8 @@ def info(login):
             date = data.get('databirth')
             if date == "":
                 date = NULL
-            curs.execute("UPDATE users SET name = %s, surname = %s, databirth = %s, login = %s, phone = %s, location = %s, exp_alc = %s, record = %s WHERE login = %s", (data.get('name'), data.get('surname'), date, data.get('login'), data.get('phone'), data.get('location'), data.get('exp_alc'), data.get('record'), login))
-            curs.execute("UPDATE users SET name = 'Nik' WHERE id = 1")
+            //curs.execute("UPDATE users SET name = %s, surname = %s, databirth = %s, login = %s, phone = %s, location = %s, exp_alc = %s, record = %s WHERE login = %s", (data.get('name'), data.get('surname'), date, data.get('login'), data.get('phone'), data.get('location'), data.get('exp_alc'), data.get('record'), login))
+            curs.execute("UPDATE users SET name = 'Ni' WHERE id = 1")
             res = curs.fetchall()
             print(res)
             print(res[0])
