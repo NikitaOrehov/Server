@@ -60,7 +60,7 @@ def get_password(login):
         print(f"Database query error: {e}")
         return jsonify({'error': 'Database error'}), 500
 
-@app.route('api/data/user/info/<login>', methods=['GET', 'POST'])
+@app.route('/api/data/user/info/<login>', methods=['GET', 'POST'])
 def info(login):
     if request.method == 'GET':
         try:
