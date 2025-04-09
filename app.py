@@ -60,6 +60,35 @@ def get_password(login):
         print(f"Database query error: {e}")
         return jsonify({'error': 'Database error'}), 500
 
+@app.route('api/data/user/info/<login>', methods=['GET', 'POST'])
+def info(login):
+    if request.method == 'GET':
+        try:
+            curs = conn.cursor()
+            curs.execute("SELECT name, surname, databirth, phone, location, exp_alc, record, id FROM users WHERE login = %s", (login))
+            res = curs.fetchone()
+            answer = {
+                'name': res[0],
+                'surname': res[1],
+                'databirth': res[2],
+                'phone': res[3],
+                'location': res[4],
+                'exp_alc': res[5], 
+                'record': res[6]
+                }
+            _id = res[7]
+            curs.execute("SELECT pred FROM PREDILECTION WHERE id = %s", _id)
+            res = curs.fetchone()
+            predilection = [i for i in res]
+            answer['pred'] = predilection
+            curs.execute("SELECT event as aFROM achievements WHERE id = %s;", _id)
+            achievements = [i for i in res]
+            answer['pred'] = achievements
+        except psycopg2.Error as e:
+            print(f"Database query error: {e}")
+            return jsonify({'error': 'Database error'}), 500
+
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
