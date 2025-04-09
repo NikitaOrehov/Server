@@ -76,20 +76,29 @@ def info(login):
                 'exp_alc': res[5], 
                 'record': res[6]
                 }
-            # _id = res[7]
-            # curs.execute("SELECT pred FROM PREDILECTION WHERE id = %s", (_id,))
-            # res = curs.fetchall()
-            # predilection = [i[0].strip() for i in res]
-            # print(predilection)
-            # answer['pred'] = predilection
-            # curs.execute("SELECT event FROM achievements WHERE id = %s", (_id,))
-            # res = curs.fetchall()
-            # achievements = [i[0].strip() for i in res]
-            # answer['achiev'] = achievements
+            _id = res[7]
+            curs.execute("SELECT pred FROM PREDILECTION WHERE id = %s", (_id,))
+            res = curs.fetchall()
+            predilection = [i[0].strip() for i in res]
+            print(predilection)
+            answer['pred'] = predilection
+            curs.execute("SELECT event FROM achievements WHERE id = %s", (_id,))
+            res = curs.fetchall()
+            achievements = [i[0].strip() for i in res]
+            answer['achiev'] = achievements
             return answer
         except psycopg2.Error as e:
             print(f"Database query error: {e}")
             return jsonify({'error': 'Database error'}), 500
+    elif request.method == 'POST':
+        data = request.get_json()
+        try:
+            curs = conn.curse()
+            curs.execute("UPDATE users SET name = %s, surname = %s, databirth = %s, login = %s, phone = %s, location = %s, exp_alc = %s, record = %s WHERE login = %s", (data.get('name'), data.get('surname'), data.get('databirth'), data.get('login'), data.get('phone'), data.get('location'), data.get('exp_alc'), data.get('record'), login))
+        except psycopg2.Error as e:
+            print(f"Database query error: {e}")
+            return jsonify({'error': 'Database error'}), 500
+
 
 
 
