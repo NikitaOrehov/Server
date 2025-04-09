@@ -3,6 +3,8 @@ import psycopg2
 from urllib.parse import urlparse
 import os
 
+from psycopg2.sql import NULL
+
 app = Flask(__name__)
 
 
@@ -94,7 +96,10 @@ def info(login):
         data = request.get_json()
         try:
             curs = conn.cursor()
-            curs.execute("UPDATE users SET name = %s, surname = %s, databirth = %s, login = %s, phone = %s, location = %s, exp_alc = %s, record = %s WHERE login = %s", (data.get('name'), data.get('surname'), data.get('databirth'), data.get('login'), data.get('phone'), data.get('location'), data.get('exp_alc'), data.get('record'), login))
+            date = data.get('databirth')
+            if date == "":
+                date = NULL
+            curs.execute("UPDATE users SET name = %s, surname = %s, databirth = %s, login = %s, phone = %s, location = %s, exp_alc = %s, record = %s WHERE login = %s", (data.get('name'), data.get('surname'), date, data.get('login'), data.get('phone'), data.get('location'), data.get('exp_alc'), data.get('record'), login))
             res = curs.fetchall()
             print(res)
         except psycopg2.Error as e:
