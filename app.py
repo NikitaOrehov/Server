@@ -97,14 +97,16 @@ def info(login):
             curs.execute('SELECT * FROM chats WHERE id_person_1 = %s OR id_person_2 = %s', (_id, _id))
             res = curs.fetchall()
             chats = {}
-            for i in res.count():
+            for i in res:
+                print("number chat: %s", i[0])
                 chat = []
-                curs.execute('SELECT id_message, id_send, text, data FROM message WHERE id_chat = %s', (chats[i]))
+                curs.execute('SELECT id_message, id_send, text, data FROM message WHERE id_chat = %s', (i[0],))
                 messages = curs.fetchall()
                 for j in messages:
+                    print("message: %s", j)
                     chat.append(j)
-                chats[chats[i]] = chat
-            answer[chats]
+                chats[i[0]] = chat
+            answer['chats'] = chats
 
             return answer
         except psycopg2.Error as e:
