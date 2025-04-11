@@ -1,12 +1,24 @@
 import array
-from flask import Flask, jsonify, request
+from http.client import FAILED_DEPENDENCY
+from flask import Flask, jsonify, request, render_template,  jsonify
 import psycopg2
 from urllib.parse import urlparse
 import os
+import socket
+import threading
 
 from psycopg2.sql import NULL
 
 app = Flask(__name__)
+
+
+HOST = '0.0.0.0'
+HTTP_PORT = 8000
+TCP_PORT = 65432
+
+# Список подключенных TCP клиентов (сокеты)
+tcp_clients = []
+tcp_client_addresses = {}  # Словарь: сокет -> адрес
 
 
 
@@ -28,6 +40,61 @@ except psycopg2.Error as e:
     print(f"Error connecting to or interacting with the database: {e}")
 
 print("Hello from code")
+
+
+
+# Функция для обработки TCP соединения с клиентом
+def handle_tcp_connection(conn, addr):
+    print(f"connect TCP client: {addr}")
+    tcp_clients.append(conn)
+    tcp_client_addresses[conn] = addr
+
+    try:
+        while True:
+            data = conn.recv(1024)
+            if not data:
+                break
+
+            message = data.decode()
+            print(f"Received from {addr}: {message}")
+
+            # Рассылаем сообщение всем TCP клиентам, кроме отправителя
+            for client in tcp_clients:
+                #if client != conn:
+                    try:
+                        client.sendall(data)
+                    except:
+                        remove_tcp_client(client)
+
+    except Exception as e:
+        print(f"Error in process TCP client {addr}: {e}")
+    finally:
+        remove_tcp_client(conn)
+        print(f"TCP client {addr} disconnect")
+
+
+# Функция для удаления TCP клиента из списка
+def remove_tcp_client(client):
+    if client in tcp_clients:
+        tcp_clients.remove(client)
+        del tcp_client_addresses[client]
+
+
+
+def start_tcp_server():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((HOST, TCP_PORT))
+        s.listen()
+        print(f"TCP server listen on {HOST}:{TCP_PORT}")
+
+        while True:
+            conn, addr = s.accept()
+            thread = threading.Thread(target=handle_tcp_connection, args=(conn, addr))
+            thread.daemon = True
+            thread.start()
+
+
+
 
 @app.route('/')
 def hello_world():
@@ -83,7 +150,8 @@ def info(login):
                 'linex' : res[9],
                 'liney' : res[10],
                 'histogramma' : res[11],
-                'circules' : res[12]
+                'circules' : res[12],
+                'id' : res[7]
                 }
             _id = res[7]
             curs.execute("SELECT pred FROM PREDILECTION WHERE id = %s", (_id,))
@@ -100,6 +168,8 @@ def info(login):
             for i in res:
                 print("number chat: %s", i[0])
                 chat = []
+                chat.append(i[1])
+                chat.append(i[2])
                 curs.execute('SELECT id_message, id_send, text, data FROM message WHERE id_chat = %s', (i[0],))
                 messages = curs.fetchall()
                 for j in messages:
@@ -143,6 +213,15 @@ def info(login):
 
 
 
+
 if __name__ == '__main__':
+    # Запускаем TCP сервер в отдельном потоке
+    tcp_thread = threading.Thread(target=start_tcp_server)
+    tcp_thread.daemon = True
+    tcp_thread.start()
+
+    # Запускаем Flask HTTP сервер
+    print(f"Flask HTTP server listen on {HOST}:{HTTP_PORT}")
+
     port = int(os.environ.get('PORT', 5000))
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(debug=True, host='0.0.0.0', port=port, use_reloader=False)
