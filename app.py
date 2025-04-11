@@ -16,9 +16,8 @@ HOST = '0.0.0.0'
 HTTP_PORT = 8000
 TCP_PORT = 65432
 
-# Список подключенных TCP клиентов (сокеты)
 tcp_clients = []
-tcp_client_addresses = {}  # Словарь: сокет -> адрес
+tcp_client_addresses = {}
 
 
 
@@ -43,7 +42,6 @@ print("Hello from code")
 
 
 
-# Функция для обработки TCP соединения с клиентом
 def handle_tcp_connection(conn, addr):
     print(f"connect TCP client: {addr}")
     tcp_clients.append(conn)
@@ -58,7 +56,6 @@ def handle_tcp_connection(conn, addr):
             message = data.decode()
             print(f"Received from {addr}: {message}")
 
-            # Рассылаем сообщение всем TCP клиентам, кроме отправителя
             for client in tcp_clients:
                 #if client != conn:
                     try:
@@ -73,7 +70,6 @@ def handle_tcp_connection(conn, addr):
         print(f"TCP client {addr} disconnect")
 
 
-# Функция для удаления TCP клиента из списка
 def remove_tcp_client(client):
     if client in tcp_clients:
         tcp_clients.remove(client)
@@ -215,12 +211,10 @@ def info(login):
 
 
 if __name__ == '__main__':
-    # Запускаем TCP сервер в отдельном потоке
     tcp_thread = threading.Thread(target=start_tcp_server)
     tcp_thread.daemon = True
     tcp_thread.start()
 
-    # Запускаем Flask HTTP сервер
     print(f"Flask HTTP server listen on {HOST}:{HTTP_PORT}")
 
     port = int(os.environ.get('PORT', 5000))
