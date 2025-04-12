@@ -52,12 +52,10 @@ def handle_tcp_connection(conn, addr):
             data = conn.recv(1024)
             if not data:
                 break
-
             message = data.decode()
             print(f"Received from {addr}: {message}")
 
             for client in tcp_clients:
-                #if client != conn:
                     try:
                         client.sendall(data)
                     except:
@@ -75,6 +73,7 @@ def remove_tcp_client(client):
         tcp_clients.remove(client)
         del tcp_client_addresses[client]
 
+        #hello
 
 
 def start_tcp_server():
